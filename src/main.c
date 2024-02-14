@@ -7,7 +7,7 @@
 USBD_HandleTypeDef USBD_Device;
 AUDIO_STATUS_TypeDef audio_status;
 
-
+void handle_without_audio(void);
 void SystemClock_Config(void);
 
 int main(void) {
@@ -29,6 +29,9 @@ int main(void) {
   USBD_Start(&USBD_Device);
   
   while (1) {
+
+    handle_without_audio();
+
     switch (audio_status.frequency) {
       case 44100:
           BSP_LED_Off(LED_RED);
@@ -53,6 +56,7 @@ int main(void) {
     }
 
     HAL_Delay(100);
+
 #ifdef DEBUG_FEEDBACK_ENDPOINT // see Makefile C_DEFS
     // see USBD_AUDIO_SOF() in usbd_audio.c
 	if (BtnPressed) {
@@ -204,6 +208,24 @@ void Error_Handler(void){
 	}
 
 }
+
+
+void handle_without_audio(void)
+{
+  static uint32_t counter = 0;
+ 
+  if (counter > 600) // 60 sec
+  { 
+    counter = 0;
+
+    if (audio_status.playing == 0U) 
+    {  
+      HAL_NVIC_SystemReset();
+    }
+  }
+  counter++;
+}
+
 
 #ifdef  USE_FULL_ASSERT
 /**

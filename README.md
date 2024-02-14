@@ -1,42 +1,46 @@
-# STM32F4xx "Black Pill" + PCM5102A USB DAC
+# STM32F4xx "Black Pill" USB to I2S DAC Audio Bridge
 
-* Uses inexpensive STM32F4xx "Black Pill" and PCM5102A modules
-* USB Full Speed Class 1 Audio device, no driver installation required
-* USB Bus powered
-* Supports 24-bit audio streams with Fs = 44.1kHz, 48kHz or 96kHz
-* USB Audio Volume (0dB to -96dB, 3dB steps) and Mute support
+## Features
+
+* USB Full Speed Class 1 Audio device, no special drivers needed
 * Isochronous with endpoint feedback (3bytes, 10.14 format) to synchronize sampling frequency Fs
-* STM32F4xx I2S master output with I2S Philips standard 24/32 data frame
-* Makefile build support for STM32F401CCU6 or STM32F411CEU6 modules 
+* Bus powered
+* Supports 24-bit audio streams with Fs = 44.1kHz, 48kHz or 96kHz
+* USB Audio Volume (0dB to -96dB, 3dB steps) and Mute control 
+* I2S master output with I2S Philips standard 24/32 data frame
+* Uses inexpensive Aliexpress-sourced STM32F4xx "Black Pill" and PCM5102A modules.
+* Build support (Makefile option) for STM32F401CCU6 and STM32F411CEU6 boards 
 * Optional MCLK output generation on STM32F411
 
-When the USB Audio DAC device is enumerated on plug-in, it reports its capabilities (audio class, sampling frequency options, bit depth). If you configure the host audio playback settings optimally, a native 96kHZ 24bit audio file will play unmodified, while a 44.1kHz or 48kHz 16bit stream will be resized to 24bits and resampled to 96kHz.
+I now understand why there is a market for audiophile DACs with higher end headphones. I was given a pair of used Grado SR60 headphones a long time ago and
+was unimpressed. With my laptop and smartphone headphone outputs they didn't sound great compared to my budget earbuds. In fact, they were lacking in bass response. And they are bulky, with a heavy cable. So they've been in a cupboard for the past 16-17 years.
 
-I now understand why there is a market for audiophile DACs with higher end headphones. I was given a pair of used Grado SR60 headphones a long time ago and was unimpressed. With my laptop and smartphone headphone outputs they didn't sound particularly remarkable. In fact, they were lacking in bass response. And they are bulky, with a heavy cable. So they've been in a cupboard for the past 16-17 years.
+I first noticed that my old iPhone SE standard wired earbuds sounded remarkably good with the USB-DAC, much better than my other budget earbuds and
+my cheap but comfortable Sennheiser PX60 headphones.
 
-I retrieved the Grado headphones and tried them out with the USB DAC. The difference is astonishing.  I'm no golden-ears audiophile, but 
-the amount of detail and frequency response is impressive. Have a look at this [Cambridge Audio website](https://www.cambridgeaudio.com/row/en/blog/our-guide-usb-audio-why-should-i-use-it?fbclid=IwAR33SS0e_jNiQ1tBSOj29KdEOi1mhHn1r87bMg-VyAMmR2NeSmKETod-JkY#:~:text=Class%201%20will%20give%20you,step%20up%20to%20Class%202) comparing a dedicated USB Audio Class 1 DAC to a laptop headphone output. I have to agree with them.
+I retrieved the Grado headphones and tried them out, the difference is astonishing.  I'm no golden-ears audiophile, but 
+the amount of detail and frequency response is remarkable. I'm kind of surprised that the DACs on brand name (Lenovo & Vaio) laptops are
+so poor in quality, but have a look at this [Cambridge Audio website](https://www.cambridgeaudio.com/row/en/blog/our-guide-usb-audio-why-should-i-use-it?fbclid=IwAR33SS0e_jNiQ1tBSOj29KdEOi1mhHn1r87bMg-VyAMmR2NeSmKETod-JkY#:~:text=Class%201%20will%20give%20you,step%20up%20to%20Class%202) comparing a dedicated USB Audio Class 1 DAC to a laptop headphone output. I have to agree with them.
 
-Even 44.1kHz/16bit MP3 files sound much better when played back via the USB DAC. The PCM5102A isn't marketed as an "audiophile" component, but it obviously can drive high-quality headphones much better than standard laptop/smartphone DAC components.
+I normally re-cycle my prototype modules for new projects, but I am now using this setup as a permanent headphone driver, and my Grado phones
+are back in service.
 
-I normally re-cycle my prototype modules for new projects, but I am now using this setup as a permanent headphone driver.
+When the USB Audio DAC device is enumerated on plug-in, it reports its capabilities (audio class, sampling frequency options, bit depth). If you configure the audio device driver optimally, a native 96kHZ 24bit audio file will play unmodified, while a 44.1kHz or 48kHz 16bit stream will be resized to 24bits and resampled to 96kHz. And yes, even 44.1kHz/16bit MP3 files sound much better when played back via the USB DAC. I'm not sure why - the PCM5102A isn't marketed as an "audiophile" component, but it obviously can drive high-quality headphones much better than standard laptop/smartphone DAC components.
 
-For a "budget audiophile" experience, try the Venus Electronics Monk Plus in-ear phones with the USB DAC. These headphones are (and look) really cheap, but the sound is amazing.
-
-# Credits
+## Credits
 * [Dragonman USB Audio project](https://github.com/dragonman225/stm32f469-usbaudio)
 * [Endpoint feedback](https://www.microchip.com/forums/m547546.aspx)
 
-# Software Development Environment
-* Ubuntu 22.04 AMDx64
-* STM32CubeIDE v1.12.0
-* STM32 F4 library v1.27.1
+## Software Development Environment
+* Ubuntu 20.04 AMDx64
+* STM32CubeIDE v1.6.0
+* STM32 F4 library v1.26.1
 * Makefile project. Edit makefile flags to
   * Select STM32F411 or STM32F401
   * Enable MCLK output generation (STM32F411 only)
   * Enable diagnostic printout on serial UART port 
 
-# Hardware
+## Hardware
 
 * WeAct STM32F411CEU6 or STM32F401CCU6 "Black Pill" development board
 	* I2S_2 peripheral interface generates WS, BCK, SDO and optionally MCK
@@ -78,7 +82,7 @@ PA0                                 KEY button. Triggers endpoint
 
 <img src="docs/prototype.jpg" />
 
-# Checking USB Audio device on Ubuntu 20.04
+## Checking USB Audio device on Ubuntu 20.04
 
 * Execute `lsusb` with and without the USB-Audio DAC plugged in, you should see the 
   new USB device
@@ -97,9 +101,9 @@ PA0                                 KEY button. Triggers endpoint
 
 <img src="docs/stream.png" />
 
-# Optimizing Pulseaudio on Ubuntu 20.04
+## Optimizing Pulseaudio on Ubuntu 20.04 for USB-Audio DAC
 
-Edit `/etc/pulse/daemon.conf` as root
+* Edit `/etc/pulse/daemon.conf` as root
 * Force re-sampling to 96kHz
 * Resize to 24bits
 * Use highest quality re-sampling algorithm
@@ -107,50 +111,14 @@ Edit `/etc/pulse/daemon.conf` as root
 
 <img src="docs/pulseaudio_config.png" />
 
-# Pipewire on Ubuntu 22.04LTS
+## Optimizing Windows 10 for USB-Audio DAC
 
-Copy `/etc/pipewire/pipewire.conf` to `~/.config/pipewire/pipewire.conf`. Change the setting of
-the default clock rate in context.properties :
-
-```
-    default.clock.rate          = 96000
-```
-
-Log out and after logging back in, play back an audio file via the USB DAC. Run
-the command :
-
-```
-pactl list sinks
-```
-
-You should see confirmation that the audio is being resampled to 24bits and a sample rate of 96kHz.
-
-```
-...
-Sink #54
-	State: RUNNING
-	Name: alsa_output.usb-STM32_Black_Pill_PCM5102A_DAC_327F368E3334-00.iec958-stereo
-	Description: PCM5102A DAC Digital Stereo (IEC958)
-	Driver: PipeWire
-	Sample Specification: s24le 2ch 96000Hz
-	Channel Map: front-left,front-right
-...
-```
-
-
-# Optimizing Windows 10
-
-Control Panel Sound playback device properties dialog
+* Use the Control Panel Sound playback device properties dialog
 
 <img src="docs/win10_96kHz_24bit.png" />
 
-# Optimizing Android
-After using customization settings in Poweramp music player on a Samsung Galaxy F62 :
 
-<img src="docs/android_poweramp_1.jpg">
-<img src="docs/android_poweramp_2.jpg">
-
-# Endpoint Feedback mechanism
+## Endpoint Feedback mechanism
 
 <img src="docs/feedback_endpoint_spec.png" />
 
@@ -175,16 +143,6 @@ This is a debug log of changes in Fs due to the implemented mechanism. The first
 
 <img src="docs/endpoint_feedback.png" />
 
-# Latency
-
-I have not measured the actual latency. A first approximation assuming no protocol overhead is half the circular buffer size (in stereo samples) multiplied by the inverse of the sampling frequency. 
-
-A single stereo sample uses 2x3 = 6 bytes. 
-The estimated latency in seconds is((AUDIO_TOTAL_BUF_SIZE/2) / 6) *  (1/sample_freq_hz)
-
-The relevant configuration parameter is AUDIO_OUT_PACKET_NUM in stm32_usb/Class/AUDIO/Inc/usbd_audio.h.
-
-You can reduce the latency by reducing the buffer size. On an older system, with external USB storage drives and streaming USB web camera consuming shared USB bandwidth, this could be an issue. 
 
 
 

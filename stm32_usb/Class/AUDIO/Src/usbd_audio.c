@@ -215,8 +215,8 @@ __ALIGN_BEGIN static uint8_t USBD_AUDIO_CfgDesc[USB_AUDIO_CONFIG_DESC_SIZ] __ALI
     24,                            /* bBitResolution (24-bits per sample) */
     3,                            /* bSamFreqType 3 frequencies supported */
     AUDIO_SAMPLE_FREQ(44100),        /* Audio sampling frequency coded on 3 bytes */
-    AUDIO_SAMPLE_FREQ(48000),        /* Audio sampling frequency coded on 3 bytes */
-    AUDIO_SAMPLE_FREQ(96000),        /* Audio sampling frequency coded on 3 bytes */
+    AUDIO_SAMPLE_FREQ(44100),        /* Audio sampling frequency coded on 3 bytes */
+    AUDIO_SAMPLE_FREQ(44100),        /* Audio sampling frequency coded on 3 bytes */
     // 17 byte
 
     // Endpoint 1 - Standard Descriptor
@@ -697,19 +697,10 @@ static uint8_t USBD_AUDIO_IsoINIncomplete(USBD_HandleTypeDef* pdev, uint8_t epnu
   * @param  epnum: endpoint index
   * @retval status
   */
-// Fix suggested by Andrew to restart audio (fix Windows problem ?)
-static uint8_t USBD_AUDIO_IsoOutIncomplete(USBD_HandleTypeDef* pdev, uint8_t epnum){
-	UNUSED(epnum);
-	USBD_AUDIO_HandleTypeDef *haudio;
-	haudio = (USBD_AUDIO_HandleTypeDef*)pdev->pClassData;
-
-	USBD_LL_FlushEP(pdev, AUDIO_OUT_EP);
-
-	/* Prepare Out endpoint to receive next audio packet */
-	(void)USBD_LL_PrepareReceive(pdev, AUDIO_OUT_EP, (uint8_t *)&haudio->buffer[haudio->wr_ptr], AUDIO_OUT_PACKET_24B);
-
-	return (uint8_t)USBD_OK;
-	}
+static uint8_t USBD_AUDIO_IsoOutIncomplete(USBD_HandleTypeDef* pdev, uint8_t epnum)
+{
+  return USBD_OK;
+}
 
 
 typedef  union UN32_ {
@@ -1060,6 +1051,9 @@ static void AUDIO_OUT_Restart(USBD_HandleTypeDef* pdev)
 
   AUDIO_OUT_StopAndReset(pdev);
 
+  fb_nom = fb_value = I2S_Clk_Config24[0].nominal_fdbk;
+
+  /*
   switch (haudio->freq) {
     case 44100:
       fb_nom = fb_value = I2S_Clk_Config24[0].nominal_fdbk;
@@ -1072,6 +1066,7 @@ static void AUDIO_OUT_Restart(USBD_HandleTypeDef* pdev)
       fb_nom = fb_value = I2S_Clk_Config24[2].nominal_fdbk;
       break;
   }
+  */
 
   ((USBD_AUDIO_ItfTypeDef*)pdev->pUserData)->Init(haudio->freq, haudio->volume, haudio->mute);
 
